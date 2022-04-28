@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon ./src/index.ts",
     "start": "node ./dist/index.js",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -25,10 +27,8 @@
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.29.4",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.2",
     "ts-node": "^10.7.0",
