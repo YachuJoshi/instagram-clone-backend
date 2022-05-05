@@ -17,13 +17,13 @@ export class User extends BaseEntity {
   email: string;
 
   @Column("varchar")
-  first_name: string;
+  firstName: string;
 
   @Column("varchar")
-  last_name: string;
+  lastName: string;
 
-  @Column("text")
-  description: string;
+  @Column("text", { default: "" })
+  bio: string;
 
   @Column("varchar")
   gender: string;
