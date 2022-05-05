@@ -1,3 +1,4 @@
 export async function signUpUser() {
-  return {};
+  // TODO
+  return;
 }

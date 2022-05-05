@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "../base";
+import { Post } from "../post";
 
 @Entity("users")
 export class User extends BaseEntity {
@@ -26,4 +27,7 @@ export class User extends BaseEntity {
 
   @Column("varchar")
   gender: string;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }
