@@ -1,28 +1,32 @@
 import { Request, Response, NextFunction } from "express";
 import { UserRepository } from "./user.repository";
+import { User } from "./user.entity";
 import { encrypt } from "../utils";
+import { CustomError } from "../error";
+import { QueryFailedError } from "typeorm";
 
-interface TypedRequestBody<T> extends Request {
+interface RequestBody<T> extends Request {
   body: T;
 }
 
-type BodyProps = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  username: string;
-  password: string;
-  gender: string;
-};
-
-type UserBody = TypedRequestBody<BodyProps>;
+type UserRequestBody = RequestBody<User>;
 
 export async function signUpUser(
-  req: UserBody,
+  req: UserRequestBody,
   res: Response,
   next: NextFunction
 ) {
   const { firstName, lastName, email, username, password, gender } = req.body;
+
+  if (!firstName || !lastName || !email || !username || !password || !gender) {
+    return next(
+      new CustomError({
+        code: 400,
+        message: "Fields are missing!",
+      })
+    );
+  }
+
   const hashedPassword = await encrypt(password);
 
   try {
@@ -41,6 +45,16 @@ export async function signUpUser(
     return res.sendStatus(204);
   } catch (e) {
     console.error(e);
+
+    if (e instanceof QueryFailedError) {
+      return next(
+        new CustomError({
+          code: 400,
+          message: e.message,
+        })
+      );
+    }
+
     return next(e);
   }
 }
