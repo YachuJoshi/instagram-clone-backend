@@ -1,5 +1,5 @@
 interface Props {
-  code: number;
+  code?: number;
   message: string;
 }
 
@@ -7,8 +7,8 @@ export class CustomError {
   code: number;
   message: string;
 
-  constructor(props: Props) {
-    this.code = props.code;
-    this.message = props.message;
+  constructor({ code = 400, message }: Props) {
+    this.code = code;
+    this.message = message;
   }
 }
