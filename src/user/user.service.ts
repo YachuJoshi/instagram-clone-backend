@@ -46,6 +46,7 @@ export async function signUpUser(
   } catch (e) {
     console.error(e);
 
+    // Narrowing Error Types
     if (e instanceof QueryFailedError) {
       return next(
         new CustomError({

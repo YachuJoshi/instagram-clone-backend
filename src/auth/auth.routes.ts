@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { Router } from "express";
-import { login } from "./auth.service";
-import { fieldsMissingError } from "../error";
+import { login, refresh } from "./auth.service";
+import {
+  fieldsMissingError,
+  forbiddenError,
+  unauthorizedError,
+} from "../error";
 
-interface TypedRequestBody<T> extends Request {
+interface TypedRequest<T> extends Request {
   body: T;
 }
 
@@ -12,13 +16,18 @@ interface LoginProps {
   password: string;
 }
 
-type LoginRequestBody = TypedRequestBody<LoginProps>;
+interface RefreshProps {
+  refreshToken: string;
+}
+
+type LoginRequest = TypedRequest<LoginProps>;
+type RefreshRequest = TypedRequest<RefreshProps>;
 
 const router = Router();
 
 router.post(
   "/login",
-  async (req: LoginRequestBody, res: Response, next: NextFunction) => {
+  async (req: LoginRequest, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -30,6 +39,24 @@ router.post(
       return res.json(data);
     } catch (e) {
       return next(e);
+    }
+  }
+);
+
+router.post(
+  "/refresh",
+  (req: RefreshRequest, res: Response, next: NextFunction) => {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return next(unauthorizedError);
+    }
+
+    try {
+      const data = refresh(refreshToken);
+      return res.json(data);
+    } catch (e) {
+      return next(forbiddenError);
     }
   }
 );
