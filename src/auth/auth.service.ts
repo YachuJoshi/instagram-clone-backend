@@ -1,8 +1,8 @@
-import { compareHashed, generateToken, verifyRefreshToken } from "../utils";
-import { UserRepository } from "../user";
+import { Request, Response, NextFunction } from "express";
 import { JwtPayload } from "jsonwebtoken";
+import { User, UserRepository } from "../user";
+import { compareHashed, generateToken, verifyRefreshToken } from "../utils";
 import { noUserError, wrongCredentialsError, forbiddenError } from "../error";
-import { User } from "../user";
 
 interface UserOmitProps {
   password: string;
@@ -14,6 +14,9 @@ type DecodedType = JwtPayload & {
 
 type Params = Omit<User, keyof UserOmitProps>;
 
+type DataResponse = Response & {
+  data?: Omit<User, "password">;
+};
 export async function login(username: string, password: string) {
   // Check if the user exists
   const user = await UserRepository.findOne({
@@ -48,4 +51,13 @@ export function refresh(refreshToken: string) {
   } catch (e) {
     throw forbiddenError;
   }
+}
+
+export function logout(req: Request, res: DataResponse, next: NextFunction) {
+  if (!res.data) {
+    return next(noUserError);
+  }
+
+  res.data = undefined;
+  return res.sendStatus(204);
 }

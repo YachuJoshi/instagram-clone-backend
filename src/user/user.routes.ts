@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { signUpUser } from "./user.service";
+import { authenticate } from "../auth";
+import { signUpUser, getUserDetails } from "./user.service";
 
 const router = Router();
 
+router.get("/me", authenticate, getUserDetails);
 router.post("/signup", signUpUser);
 
 export default router;

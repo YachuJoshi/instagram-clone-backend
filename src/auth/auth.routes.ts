@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { Router } from "express";
-import { login, refresh } from "./auth.service";
+import { login, refresh, logout } from "./auth.service";
 import {
   fieldsMissingError,
   forbiddenError,
   unauthorizedError,
 } from "../error";
+import { authenticate } from "./auth.middleware";
 
 interface TypedRequest<T> extends Request {
   body: T;
@@ -60,5 +61,7 @@ router.post(
     }
   }
 );
+
+router.delete("/logout", authenticate, logout);
 
 export default router;

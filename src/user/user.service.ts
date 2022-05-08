@@ -4,12 +4,15 @@ import { User } from "./user.entity";
 import { encrypt } from "../utils";
 import { CustomError } from "../error";
 import { QueryFailedError } from "typeorm";
+import { noUserError } from "../error";
 
-interface RequestBody<T> extends Request {
-  body: T;
-}
+type UserRequestBody = Request & {
+  body: User;
+};
 
-type UserRequestBody = RequestBody<User>;
+type DataResponse = Response & {
+  data?: Omit<User, "password">;
+};
 
 export async function signUpUser(
   req: UserRequestBody,
@@ -58,4 +61,16 @@ export async function signUpUser(
 
     return next(e);
   }
+}
+
+export function getUserDetails(
+  _: Request,
+  res: DataResponse,
+  next: NextFunction
+) {
+  if (!res.data) {
+    return next(noUserError);
+  }
+
+  return res.json(res.data);
 }
