@@ -28,6 +28,9 @@ type DataResponse = Response & {
 
 type LoginRequest = TypedRequest<LoginProps>;
 type RefreshRequest = TypedRequest<RefreshProps>;
+type DataResponse = Response & {
+  data?: Omit<User, "password">;
+};
 
 const router = Router();
 
