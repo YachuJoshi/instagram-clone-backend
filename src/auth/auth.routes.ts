@@ -1,11 +1,12 @@
-import { Request, Response, NextFunction } from "express";
-import { Router } from "express";
-import { login, refresh, logout } from "./auth.service";
+import { Request, Response, NextFunction, Router } from "express";
+import { User } from "../user";
 import {
+  noUserError,
   fieldsMissingError,
   forbiddenError,
   unauthorizedError,
 } from "../error";
+import { login, refresh } from "./auth.service";
 import { authenticate } from "./auth.middleware";
 
 interface TypedRequest<T> extends Request {
@@ -23,6 +24,9 @@ interface RefreshProps {
 
 type LoginRequest = TypedRequest<LoginProps>;
 type RefreshRequest = TypedRequest<RefreshProps>;
+type DataResponse = Response & {
+  data?: Omit<User, "password">;
+};
 
 const router = Router();
 
@@ -62,6 +66,17 @@ router.post(
   }
 );
 
-router.delete("/logout", authenticate, logout);
+router.delete(
+  "/logout",
+  authenticate,
+  (_: Request, res: DataResponse, next: NextFunction) => {
+    if (!res.data) {
+      return next(noUserError);
+    }
+
+    res.data = undefined;
+    return res.sendStatus(204);
+  }
+);
 
 export default router;
