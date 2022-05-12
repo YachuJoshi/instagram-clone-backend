@@ -7,6 +7,6 @@ export const createMedia = async (url: string, post: Post) => {
     post,
   });
 
-  // await MediaRepository.save(media);
+  await MediaRepository.save(media);
   return media;
 };

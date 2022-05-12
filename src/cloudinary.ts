@@ -6,4 +6,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export { cloudinary };
+async function upload(data: string) {
+  return await cloudinary.uploader.upload(data, {
+    upload_preset: "blyxamfv",
+  });
+}
+
+export { cloudinary, upload };
