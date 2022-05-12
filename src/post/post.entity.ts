@@ -1,6 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "../base";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "../user";
+import { Media } from "../media";
+import { BaseEntity } from "../base";
 
 @Entity("post")
 export class Post extends BaseEntity {
@@ -12,4 +19,7 @@ export class Post extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.posts)
   user: User;
+
+  @OneToMany(() => Media, (media) => media.post)
+  medias: Media[];
 }
