@@ -22,3 +22,8 @@ export const forbiddenError = new CustomError({
   code: 403,
   message: "Forbidden",
 });
+
+export const noMediaAttachedError = new CustomError({
+  code: 400,
+  message: "No Files Attached!",
+});

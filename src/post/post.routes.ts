@@ -2,33 +2,45 @@ import { authenticate } from "../auth";
 import { upload } from "../cloudinary";
 import { multerUploads } from "../multer";
 import DatauriParser from "datauri/parser";
+import { User, UserRepository } from "../user";
+import { noMediaAttachedError } from "../error";
+import { createPost } from "../post";
 import { Request, Response, NextFunction, Router } from "express";
+
+type DataResponse = Response & {
+  data?: Omit<User, "password">;
+};
 
 const router = Router();
 
 router.post(
-  "/upload",
+  "/create",
+  authenticate,
   multerUploads,
-  async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.files) return;
-    const files = req.files! as Express.Multer.File[];
+  async (req: Request, res: DataResponse, next: NextFunction) => {
+    if (!res.data) return;
+    const user = await UserRepository.findBy({
+      id: res.data.id,
+    });
 
+    if (!req.files) {
+      return next(noMediaAttachedError);
+    }
+    const caption = req.body?.caption || "";
+    const files = req.files! as Express.Multer.File[];
     const parser = new DatauriParser();
     const contents = files.map(
       (file) => parser.format(".png", file.buffer).content
     ) as string[];
 
     try {
-      const mediaURLS = [];
+      const mediaURLs = [];
       for (const content of contents) {
-        const response = await upload(content);
-        mediaURLS.push({
-          height: response.height,
-          width: response.width,
-          publicId: response.public_id,
-        });
+        const { public_id: publicID } = await upload(content);
+        mediaURLs.push(publicID);
       }
-      return res.status(200).json(mediaURLS);
+      await createPost(mediaURLs, user[0], caption);
+      return res.sendStatus(204);
     } catch (e) {
       return next(e);
     }

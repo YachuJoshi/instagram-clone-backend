@@ -14,7 +14,7 @@ export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("text")
+  @Column("text", { default: "" })
   caption: string;
 
   @ManyToOne(() => User, (user) => user.posts)

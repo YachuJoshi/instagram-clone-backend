@@ -8,7 +8,7 @@ cloudinary.config({
 
 async function upload(data: string) {
   return await cloudinary.uploader.upload(data, {
-    upload_preset: "blyxamfv",
+    upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET,
   });
 }
 
