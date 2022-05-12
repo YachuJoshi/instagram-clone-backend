@@ -1,7 +1,7 @@
-import DatauriParser from "datauri/parser";
 import { authenticate } from "../auth";
 import { upload } from "../cloudinary";
 import { multerUploads } from "../multer";
+import DatauriParser from "datauri/parser";
 import { Request, Response, NextFunction, Router } from "express";
 
 const router = Router();
@@ -10,15 +10,25 @@ router.post(
   "/upload",
   multerUploads,
   async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.file) return;
+    if (!req.files) return;
+    const files = req.files! as Express.Multer.File[];
 
     const parser = new DatauriParser();
-    const { content } = parser.format(".png", req.file.buffer);
-    if (!content) return;
+    const contents = files.map(
+      (file) => parser.format(".png", file.buffer).content
+    ) as string[];
 
     try {
-      const response = await upload(content);
-      console.log(response);
+      const mediaURLS = [];
+      for (const content of contents) {
+        const response = await upload(content);
+        mediaURLS.push({
+          height: response.height,
+          width: response.width,
+          publicId: response.public_id,
+        });
+      }
+      return res.status(200).json(mediaURLS);
     } catch (e) {
       return next(e);
     }
