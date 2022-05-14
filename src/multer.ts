@@ -20,6 +20,6 @@ const multerUploads = multer({
       return callback(null, false);
     }
   },
-}).array("images", 2);
+}).array("images", 4);
 
 export { multerUploads };

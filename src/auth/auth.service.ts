@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { User, UserRepository } from "../user";
+import { User, UserRepository, getUserByUsername } from "../user";
 import { compareHashed, generateToken, verifyRefreshToken } from "../utils";
 import { NoUserError, WrongCredentialsError, ForbiddenError } from "../error";
 
@@ -9,11 +9,7 @@ type DecodedType = JwtPayload & {
 
 export async function login(username: string, password: string) {
   // Check if the user exists
-  const user = await UserRepository.findOne({
-    where: {
-      username,
-    },
-  });
+  const user = await getUserByUsername(username);
 
   if (!user) {
     throw NoUserError;

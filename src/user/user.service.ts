@@ -10,6 +10,18 @@ interface UserSignUpProps {
   gender: string;
 }
 
+export async function getUserById(id: number) {
+  return await UserRepository.findOneBy({
+    id,
+  });
+}
+
+export async function getUserByUsername(username: string) {
+  return await UserRepository.findOneBy({
+    username,
+  });
+}
+
 export async function signUpUser({
   firstName,
   lastName,
@@ -40,4 +52,13 @@ export async function getUserDetailsByUserName(username: string) {
       posts: true,
     },
   });
+}
+
+export async function getUserPostsMedia(username: string) {
+  console.log(1234);
+  return await UserRepository.createQueryBuilder("user")
+    .innerJoinAndSelect("user.posts", "post")
+    .innerJoinAndSelect("post.medias", "media")
+    .where("user.username = :username", { username })
+    .getOne();
 }

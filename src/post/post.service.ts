@@ -19,3 +19,9 @@ export async function createPost(
 
   return post;
 }
+
+export async function getPostById(id: number) {
+  return await PostRepository.findOneBy({
+    id,
+  });
+}

@@ -6,6 +6,6 @@ import { postRoutes } from "./post";
 const router = Router();
 router.use("/auth", authRoutes);
 router.use("/user", userRoutes);
-router.use("/post", postRoutes);
+router.use("/posts", postRoutes);
 
 export default router;

@@ -30,3 +30,8 @@ export const NoMediaAttachedError = new CustomError({
 export const DuplicateKeyError = new CustomError({
   message: "Duplicate Field",
 });
+
+export const NoPostError = new CustomError({
+  code: 404,
+  message: "No Post!",
+});

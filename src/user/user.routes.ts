@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction, Router } from "express";
 import { User } from "../user";
 import { authenticate } from "../auth";
 import { QueryFailedError } from "typeorm";
-import { signUpUser, getUserDetailsByUserName } from "./user.service";
+import { signUpUser, getUserPostsMedia } from "./user.service";
+import { Request, Response, NextFunction, Router } from "express";
 import { NoUserError, FieldsMissingError, DuplicateKeyError } from "../error";
 
 type UserRequestBody = Request & {
@@ -33,7 +33,7 @@ router.get(
     const { username } = req.params;
     if (!username) return;
 
-    const user = await getUserDetailsByUserName(username);
+    const user = await getUserPostsMedia(username);
     if (!user) {
       return next(NoUserError);
     }
