@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { User } from "../user";
 import {
-  noUserError,
-  fieldsMissingError,
-  forbiddenError,
-  unauthorizedError,
+  NoUserError,
+  FieldsMissingError,
+  ForbiddenError,
+  UnauthorizedError,
 } from "../error";
 import { login, refresh } from "./auth.service";
 import { authenticate } from "./auth.middleware";
@@ -37,7 +37,7 @@ router.post(
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return next(fieldsMissingError);
+      return next(FieldsMissingError);
     }
 
     try {
@@ -55,14 +55,14 @@ router.post(
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return next(unauthorizedError);
+      return next(UnauthorizedError);
     }
 
     try {
       const data = refresh(refreshToken);
       return res.json(data);
     } catch (e) {
-      return next(forbiddenError);
+      return next(ForbiddenError);
     }
   }
 );
@@ -72,7 +72,7 @@ router.delete(
   authenticate,
   (_: Request, res: DataResponse, next: NextFunction) => {
     if (!res.data) {
-      return next(noUserError);
+      return next(NoUserError);
     }
 
     res.data = undefined;

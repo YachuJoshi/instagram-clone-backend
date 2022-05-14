@@ -1,7 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 import { User, UserRepository } from "../user";
 import { compareHashed, generateToken, verifyRefreshToken } from "../utils";
-import { noUserError, wrongCredentialsError, forbiddenError } from "../error";
+import { NoUserError, WrongCredentialsError, ForbiddenError } from "../error";
 
 type DecodedType = JwtPayload & {
   data?: User;
@@ -16,7 +16,7 @@ export async function login(username: string, password: string) {
   });
 
   if (!user) {
-    throw noUserError;
+    throw NoUserError;
   }
 
   // User exists
@@ -34,7 +34,7 @@ export async function login(username: string, password: string) {
   const isMatched = await compareHashed(password, passwordInDb);
 
   if (!isMatched) {
-    throw wrongCredentialsError;
+    throw WrongCredentialsError;
   }
 
   return generateToken(user);
@@ -47,6 +47,6 @@ export function refresh(refreshToken: string) {
     if (!decoded.data) return;
     return generateToken(decoded.data);
   } catch (e) {
-    throw forbiddenError;
+    throw ForbiddenError;
   }
 }

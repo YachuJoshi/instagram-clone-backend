@@ -1,49 +1,34 @@
-import { Request, Response, NextFunction } from "express";
 import { encrypt } from "../utils";
-import { User } from "./user.entity";
-import { QueryFailedError } from "typeorm";
 import { UserRepository } from "./user.repository";
-import { CustomError } from "../error";
 
-type UserRequestBody = Request & {
-  body: User;
-};
+interface UserSignUpProps {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+  gender: string;
+}
 
-export async function signUpUser(
-  req: UserRequestBody,
-  res: Response,
-  next: NextFunction
-) {
-  const { firstName, lastName, email, username, password, gender } = req.body;
-
-  if (!firstName || !lastName || !email || !username || !password || !gender) {
-    return next(
-      new CustomError({
-        code: 400,
-        message: "Fields are missing!",
-      })
-    );
-  }
-
+export async function signUpUser({
+  firstName,
+  lastName,
+  email,
+  username,
+  password,
+  gender,
+}: UserSignUpProps) {
   const hashedPassword = await encrypt(password);
+  const user = await UserRepository.create({
+    firstName,
+    lastName,
+    email,
+    username,
+    password: hashedPassword,
+    gender,
+  });
 
-  try {
-    const user = await UserRepository.create({
-      firstName,
-      lastName,
-      email,
-      username,
-      password: hashedPassword,
-      gender,
-    });
-
-    await UserRepository.save(user);
-    console.log("User Signed Up Successfully!");
-
-    return res.sendStatus(204);
-  } catch (e) {
-    return next(QueryFailedError);
-  }
+  await UserRepository.save(user);
 }
 
 export async function getUserDetailsByUserName(username: string) {

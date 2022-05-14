@@ -3,12 +3,12 @@ import { upload } from "../cloudinary";
 import { multerUploads } from "../multer";
 import DatauriParser from "datauri/parser";
 import { User, UserRepository } from "../user";
-import { noMediaAttachedError } from "../error";
+import { NoMediaAttachedError } from "../error";
 import { createPost } from "../post";
 import { Request, Response, NextFunction, Router } from "express";
 
 type DataResponse = Response & {
-  data?: Omit<User, "password">;
+  data?: User;
 };
 
 const router = Router();
@@ -24,7 +24,7 @@ router.post(
     });
 
     if (!req.files) {
-      return next(noMediaAttachedError);
+      return next(NoMediaAttachedError);
     }
 
     const caption = req.body?.caption || "";

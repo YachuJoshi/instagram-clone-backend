@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import { verifyAccessToken } from "../utils";
-import { forbiddenError, unauthorizedError } from "../error";
+import { ForbiddenError, UnauthorizedError } from "../error";
 import { User } from "../user";
 
 type DataResponse = Response & {
@@ -21,7 +21,7 @@ export function authenticate(
   const accessToken = authHeader && authHeader.split(" ")[1];
 
   if (!accessToken) {
-    return next(unauthorizedError);
+    return next(UnauthorizedError);
   }
 
   try {
@@ -29,6 +29,6 @@ export function authenticate(
     res.data = decoded.data;
     return next();
   } catch (e) {
-    return next(forbiddenError);
+    return next(ForbiddenError);
   }
 }
