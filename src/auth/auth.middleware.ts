@@ -4,16 +4,12 @@ import { verifyAccessToken } from "../utils";
 import { forbiddenError, unauthorizedError } from "../error";
 import { User } from "../user";
 
-interface UserOmitProps {
-  password: string;
-}
-
 type DataResponse = Response & {
-  data?: Omit<User, keyof UserOmitProps>;
+  data?: User;
 };
 
 type DecodedType = JwtPayload & {
-  data?: Omit<User, keyof UserOmitProps>;
+  data?: User;
 };
 
 export function authenticate(
@@ -29,7 +25,7 @@ export function authenticate(
   }
 
   try {
-    const decoded: DecodedType = <JwtPayload>verifyAccessToken(accessToken);
+    const decoded: DecodedType = verifyAccessToken(accessToken) as JwtPayload;
     res.data = decoded.data;
     return next();
   } catch (e) {

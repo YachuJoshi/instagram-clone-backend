@@ -1,17 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRepository } from "./user.repository";
-import { User } from "./user.entity";
 import { encrypt } from "../utils";
-import { CustomError } from "../error";
+import { User } from "./user.entity";
 import { QueryFailedError } from "typeorm";
-import { noUserError } from "../error";
+import { UserRepository } from "./user.repository";
+import { CustomError } from "../error";
 
 type UserRequestBody = Request & {
   body: User;
-};
-
-type DataResponse = Response & {
-  data?: Omit<User, "password">;
 };
 
 export async function signUpUser(
@@ -47,30 +42,17 @@ export async function signUpUser(
 
     return res.sendStatus(204);
   } catch (e) {
-    console.error(e);
-
-    // Narrowing Error Types
-    if (e instanceof QueryFailedError) {
-      return next(
-        new CustomError({
-          code: 400,
-          message: e.message,
-        })
-      );
-    }
-
-    return next(e);
+    return next(QueryFailedError);
   }
 }
 
-export function getUserDetails(
-  _: Request,
-  res: DataResponse,
-  next: NextFunction
-) {
-  if (!res.data) {
-    return next(noUserError);
-  }
-
-  return res.json(res.data);
+export async function getUserDetailsByUserName(username: string) {
+  return await UserRepository.findOne({
+    where: {
+      username,
+    },
+    relations: {
+      posts: true,
+    },
+  });
 }

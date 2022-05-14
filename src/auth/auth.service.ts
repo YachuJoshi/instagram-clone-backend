@@ -3,15 +3,9 @@ import { User, UserRepository } from "../user";
 import { compareHashed, generateToken, verifyRefreshToken } from "../utils";
 import { noUserError, wrongCredentialsError, forbiddenError } from "../error";
 
-interface UserOmitProps {
-  password: string;
-}
-
 type DecodedType = JwtPayload & {
-  data?: Omit<User, keyof UserOmitProps>;
+  data?: User;
 };
-
-type Params = Omit<User, keyof UserOmitProps>;
 
 export async function login(username: string, password: string) {
   // Check if the user exists
@@ -26,7 +20,15 @@ export async function login(username: string, password: string) {
   }
 
   // User exists
-  const { password: passwordInDb, ...data } = user;
+  const userPassword = await UserRepository.createQueryBuilder("user")
+    .select("user.id", "id")
+    .where("user.username = :username", { username })
+    .addSelect("user.password")
+    .getOne();
+
+  if (!userPassword) return;
+
+  const { password: passwordInDb } = userPassword;
 
   // Check user credentials
   const isMatched = await compareHashed(password, passwordInDb);
@@ -35,12 +37,12 @@ export async function login(username: string, password: string) {
     throw wrongCredentialsError;
   }
 
-  return generateToken(data as Params);
+  return generateToken(user);
 }
 
 export function refresh(refreshToken: string) {
   try {
-    const decoded: DecodedType = <JwtPayload>verifyRefreshToken(refreshToken);
+    const decoded: DecodedType = verifyRefreshToken(refreshToken) as JwtPayload;
 
     if (!decoded.data) return;
     return generateToken(decoded.data);

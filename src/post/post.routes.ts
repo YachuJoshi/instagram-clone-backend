@@ -26,6 +26,7 @@ router.post(
     if (!req.files) {
       return next(noMediaAttachedError);
     }
+
     const caption = req.body?.caption || "";
     const files = req.files! as Express.Multer.File[];
     const parser = new DatauriParser();

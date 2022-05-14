@@ -1,13 +1,7 @@
 import jwt from "jsonwebtoken";
 import { User } from "../user";
 
-interface UserOmitProps {
-  password: string;
-}
-
-type Params = Omit<User, keyof UserOmitProps>;
-
-export const generateToken = (data: Params) => {
+export const generateToken = (data: User) => {
   const accessToken = jwt.sign(
     { data },
     process.env.ACCESS_TOKEN_SECRET as string

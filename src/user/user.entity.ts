@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { BaseEntity } from "../base";
 import { Post } from "../post";
 
@@ -8,9 +14,10 @@ export class User extends BaseEntity {
   id: number;
 
   @Column("varchar", { unique: true })
+  @Index()
   username: string;
 
-  @Column("varchar")
+  @Column("varchar", { select: false })
   password: string;
 
   @Column("varchar", { unique: true })
