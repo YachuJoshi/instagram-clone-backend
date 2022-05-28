@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "cloudinary": "^1.29.1",
@@ -29,6 +28,7 @@
     "typeorm": "^0.3.6"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@tsconfig/node16": "^1.0.2",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",

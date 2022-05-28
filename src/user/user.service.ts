@@ -10,6 +10,10 @@ interface UserSignUpProps {
   gender: string;
 }
 
+export async function getAllUsers() {
+  return await UserRepository.find();
+}
+
 export async function getUserById(id: number) {
   return await UserRepository.findOneBy({
     id,
@@ -55,7 +59,6 @@ export async function getUserDetailsByUserName(username: string) {
 }
 
 export async function getUserPostsMedia(username: string) {
-  console.log(1234);
   return await UserRepository.createQueryBuilder("user")
     .innerJoinAndSelect("user.posts", "post")
     .innerJoinAndSelect("post.medias", "media")

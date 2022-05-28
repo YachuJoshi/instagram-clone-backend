@@ -4,10 +4,10 @@ import { User } from "../user";
 export const generateToken = (data: User) => {
   const accessToken = jwt.sign(
     { data },
-    process.env.ACCESS_TOKEN_SECRET as string
-    // {
-    //   expiresIn: "15m",
-    // }
+    process.env.ACCESS_TOKEN_SECRET as string,
+    {
+      expiresIn: "15m",
+    }
   );
   const refreshToken = jwt.sign(
     { data },

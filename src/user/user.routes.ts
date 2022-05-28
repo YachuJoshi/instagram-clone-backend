@@ -1,7 +1,7 @@
 import { User } from "../user";
 import { authenticate } from "../auth";
 import { QueryFailedError } from "typeorm";
-import { signUpUser, getUserPostsMedia } from "./user.service";
+import { signUpUser, getUserPostsMedia, getAllUsers } from "./user.service";
 import { Request, Response, NextFunction, Router } from "express";
 import { NoUserError, FieldsMissingError, DuplicateKeyError } from "../error";
 
@@ -15,6 +15,13 @@ type DataResponse = Response & {
 
 const router = Router();
 
+// Get all users
+router.get("/", async (_: Request, res: Response) => {
+  const users = await getAllUsers();
+  return res.json(users);
+});
+
+// Get current user
 router.get(
   "/me",
   authenticate,
@@ -27,6 +34,7 @@ router.get(
   }
 );
 
+// Get user by username
 router.get(
   "/:username",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -41,6 +49,7 @@ router.get(
   }
 );
 
+// Signup
 router.post(
   "/signup",
   async (req: UserRequestBody, res: Response, next: NextFunction) => {
