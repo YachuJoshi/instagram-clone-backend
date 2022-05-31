@@ -25,3 +25,10 @@ export async function getPostById(id: number) {
     id,
   });
 }
+
+export async function getUserPostById(postId: number) {
+  return await PostRepository.createQueryBuilder("post")
+    .innerJoinAndSelect("post.medias", "media")
+    .andWhere("post.id = :postId", { postId })
+    .getOne();
+}

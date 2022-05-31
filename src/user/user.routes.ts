@@ -1,9 +1,15 @@
 import { User } from "../user";
 import { authenticate } from "../auth";
+import { getUserPostById } from "../post";
 import { QueryFailedError } from "typeorm";
-import { signUpUser, getUserPostsMedia, getAllUsers } from "./user.service";
 import { Request, Response, NextFunction, Router } from "express";
-import { NoUserError, FieldsMissingError, DuplicateKeyError } from "../error";
+import { signUpUser, getUserPostsMedia, getAllUsers } from "./user.service";
+import {
+  NoUserError,
+  NoPostError,
+  FieldsMissingError,
+  DuplicateKeyError,
+} from "../error";
 
 type UserRequestBody = Request & {
   body: User;
@@ -46,6 +52,20 @@ router.get(
       return next(NoUserError);
     }
     return res.json(user);
+  }
+);
+
+router.get(
+  "/:username/posts/:postId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { username, postId } = req.params;
+    if (!username || !postId) return;
+
+    const post = await getUserPostById(+postId);
+    if (!post) {
+      return next(NoPostError);
+    }
+    return res.json(post);
   }
 );
 

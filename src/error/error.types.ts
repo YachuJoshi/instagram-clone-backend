@@ -33,5 +33,5 @@ export const DuplicateKeyError = new CustomError({
 
 export const NoPostError = new CustomError({
   code: 404,
-  message: "No Post!",
+  message: "No Such Post!",
 });
