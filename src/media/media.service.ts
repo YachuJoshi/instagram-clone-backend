@@ -1,11 +1,20 @@
 import { Post } from "src/post";
 import { MediaRepository } from "./media.respository";
 
-export const createMedia = async (url: string, post: Post) => {
-  const media = MediaRepository.create({
+interface MediaType {
+  height: number;
+  width: number;
+  publicID: string;
+}
+
+export const createMedia = async (media: MediaType, post: Post) => {
+  const { height, width, publicID: url } = media;
+  const m = MediaRepository.create({
+    height: String(height),
+    width: String(width),
     url,
     post,
   });
 
-  await MediaRepository.save(media);
+  await MediaRepository.save(m);
 };

@@ -10,6 +10,12 @@ export class Media extends BaseEntity {
   @Column("text", { unique: true })
   url: string;
 
+  @Column("text", { default: "" })
+  height: string;
+
+  @Column("text", { default: "" })
+  width: string;
+
   @ManyToOne(() => Post, (post) => post.medias)
   post: Post;
 }

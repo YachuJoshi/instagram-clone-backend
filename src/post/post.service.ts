@@ -2,8 +2,14 @@ import { User } from "../user";
 import { createMedia } from "../media";
 import { PostRepository } from "./post.repository";
 
+interface MediaURL {
+  height: number;
+  width: number;
+  publicID: string;
+}
+
 export async function createPost(
-  mediaURLs: string[],
+  mediaURLs: MediaURL[],
   user: User,
   caption: string
 ) {
@@ -13,8 +19,8 @@ export async function createPost(
   });
   await PostRepository.save(post);
 
-  for (const url of mediaURLs) {
-    await createMedia(url, post);
+  for (const media of mediaURLs) {
+    await createMedia(media, post);
   }
 
   return post;

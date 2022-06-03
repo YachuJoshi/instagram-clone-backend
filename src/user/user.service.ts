@@ -63,5 +63,6 @@ export async function getUserPostsMedia(username: string) {
     .innerJoinAndSelect("user.posts", "post")
     .innerJoinAndSelect("post.medias", "media")
     .where("user.username = :username", { username })
+    .orderBy("post.createdAt", "DESC")
     .getOne();
 }

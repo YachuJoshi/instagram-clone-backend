@@ -38,8 +38,8 @@ router.post(
     try {
       const mediaURLs = [];
       for (const content of contents) {
-        const { public_id: publicID } = await upload(content);
-        mediaURLs.push(publicID);
+        const { height, width, public_id: publicID } = await upload(content);
+        mediaURLs.push({ height, width, publicID });
       }
       await createPost(mediaURLs, user, caption);
       return res.sendStatus(204);
